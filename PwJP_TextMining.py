@@ -5,9 +5,31 @@ Created on Wed Mar 24 14:12:27 2021
 @author: aroza
 """
 
-# kod
+# imports
 import pandas
 import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Functions
+
+def draw_plot(feature, title, df,  size=1):
+    f, ax = plt.subplots(1,1, figsize=(4*size,4))
+    g = sns.countplot(df[feature], order = df[feature].value_counts().index[:20], palette='Set1')
+    g.set_title(title)
+    plt.xticks(rotation=90, size=8)
+    plt.xlabel(' ')
+    plt.ylabel('count')
+    for p in ax.patches:
+        height = p.get_height()
+        ax.text(p.get_x()+p.get_width()/2.,height,'{:1}'.format(height),ha="center") 
+    plt.show()      
+    
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#                                               Code
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# Read CSV
+
 pandas.read_csv
 df = pandas.read_csv('women_clothing_review.csv')
 list_reviews = df.values.tolist()
@@ -16,7 +38,7 @@ list_reviews_text=df['review_text']
 
 
 #%%
-
+# Extracting data from the list
 
 list_id_clothes = []
 list_age = [] 
@@ -43,24 +65,8 @@ for row in list_reviews:
     list_class_name.append(row[10])
    
     
-
 #%%
-
-def draw_plot(feature, title, df,  size=1):
-    f, ax = plt.subplots(1,1, figsize=(4*size,4))
-    g = sns.countplot(df[feature], order = df[feature].value_counts().index[:20], palette='Set1')
-    g.set_title(title)
-    plt.xticks(rotation=90, size=8)
-    plt.xlabel(' ')
-    plt.ylabel('count')
-    for p in ax.patches:
-        height = p.get_height()
-        ax.text(p.get_x()+p.get_width()/2.,height,'{:1}'.format(height),ha="center") 
-    plt.show()      
-    
-    
-#%%
-
+# Drawing graphs of distributions of variables
 draw_plot("age", "Customer age distribution", df,4)
 draw_plot("division_name", "The distribution of divisions name", df,4)
 draw_plot("department_name", "The distribution of departments name", df,4)
