@@ -9,6 +9,18 @@ Created on Wed Mar 24 14:12:27 2021
 import pandas
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
+#to extract unique words
+from collections import Counter
+
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize 
+#download english stopwords
+nltk.download('stopwords')
+nltk.download('punkt')
+#delete punctuation
+from nltk.tokenize import RegexpTokenizer
 
 # Functions
 
@@ -73,13 +85,39 @@ draw_plot("department_name", "The distribution of departments name", df,4)
 draw_plot("class_name", "The distribution of classes name", df,4)
 
 
+#%% Most frequent words in review_text
+all_reviews = ','.join([str(i) for i in list_only_reviews])
 
 
 
+stop_words = set(stopwords.words('english')) 
+  
+tokenizer = RegexpTokenizer(r'\w+')
+word_tokens=tokenizer.tokenize(all_reviews)
+  
+filtered_sentence = [w for w in word_tokens if not w in stop_words] 
 
+filtered_sentence = [] 
+  
+for w in word_tokens: 
+    if w not in stop_words: 
+        filtered_sentence.append(w) 
 
+counter = Counter(filtered_sentence)
+most_occur = counter.most_common(10)
+word=[]
+word_counter=[]
+for it in most_occur:
+    word.append(it[0])
+    word_counter.append(it[1])
 
+pos = np.arange(len(word))
+width = 1.0     # gives histogram aspect to the bar diagram
 
-   
-    
-    
+ax = plt.axes()
+ax.set_xticks(pos)
+ax.set_xticklabels(word)
+ax.set_title('10 Most frequent words')
+
+plt.bar(pos, word_counter, width=0.4, color=(0.3, 0.3, 0.3, 0.3), edgecolor='blue')
+plt.show()
