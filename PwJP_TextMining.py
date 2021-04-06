@@ -21,7 +21,7 @@ nltk.download('stopwords')
 nltk.download('punkt')
 #delete punctuation
 from nltk.tokenize import RegexpTokenizer
-
+from wordcloud import WordCloud
 # Functions
 
 def draw_plot(feature, title, df,  size=1):
@@ -35,6 +35,21 @@ def draw_plot(feature, title, df,  size=1):
         height = p.get_height()
         ax.text(p.get_x()+p.get_width()/2.,height,'{:1}'.format(height),ha="center") 
     plt.show()      
+ 
+    
+def draw_wordCloud(feature, title, maxWords):
+    text_data=df[feature]
+    text = " ".join(t for t in text_data.dropna()) #generujemy jeden ciągły tekst, usuwamy brakujące wartosci
+    stop_words = set(stopwords.words('english')) #wykorzystujemy stopwords (odrzucamy z analizy słowa ze stoplisty)
+    
+    # ustawiamy parametry dla chmury słów
+    wordcloud = WordCloud(stopwords=stop_words, scale=4, max_font_size=50, max_words=maxWords,background_color="black", colormap="Blues").generate(text)
+    fig = plt.figure(figsize=(20,20))
+    plt.axis('off')
+    fig.suptitle(title, fontsize=20)
+    fig.subplots_adjust(top=2.3)
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.show()
     
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -121,3 +136,7 @@ ax.set_title('10 Most frequent words')
 
 plt.bar(pos, word_counter, width=0.4, color=(0.3, 0.3, 0.3, 0.3), edgecolor='blue')
 plt.show()
+
+#%% Draw word cloud
+
+draw_wordCloud('review_text', "WordCloud for the 200 most frequent words", 200)
