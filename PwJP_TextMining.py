@@ -50,6 +50,15 @@ def draw_wordCloud(feature, title, maxWords):
     fig.subplots_adjust(top=2.3)
     plt.imshow(wordcloud, interpolation='bilinear')
     plt.show()
+ 
+def convert_to_lowercase(list_text):
+    for idx,x in enumerate(list_text):
+        for ele in x:
+            if ele.isupper():
+                x = x.replace(ele, ele.lower())    
+        list_text[idx]  = x  
+   
+ 
     
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,3 +149,13 @@ plt.show()
 #%% Draw word cloud
 
 draw_wordCloud('review_text', "WordCloud for the 200 most frequent words", 200)
+
+
+#%% Word2Vec
+
+# Conversion of lower case letters
+
+list_reviews_text_cleaned = word_tokens.copy()
+convert_to_lowercase(list_reviews_text_cleaned)
+
+
