@@ -159,3 +159,21 @@ list_reviews_text_cleaned = word_tokens.copy()
 convert_to_lowercase(list_reviews_text_cleaned)
 
 
+from gensim.models import Word2Vec
+
+model = Word2Vec(sentences = list_reviews_text_cleaned, vector_size=100, window=5, min_count=1, workers=4)
+model.save("word2vec.model")
+
+model = Word2Vec.load("word2vec.model")
+model.train([["dress", "size"]], total_examples=1, epochs=100)
+
+#Wyuczone wektory słów są przechowywane w KeyedVectorsinstancji jako model.wv
+
+vector = model.wv['d'] # get numpy vector of a word
+print("Get numpy vector of a word d")
+print(vector)
+sims = model.wv.most_similar('d', topn=10) # get other similar words 
+print("Get other similar words to d")
+print(sims) 
+
+
