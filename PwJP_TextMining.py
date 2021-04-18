@@ -6,10 +6,12 @@ Created on Wed Mar 24 14:12:27 2021
 """
 
 # imports
-import pandas
+import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+import scipy.sparse.linalg as sp
+
 #to extract unique words
 from collections import Counter
 
@@ -66,8 +68,8 @@ def convert_to_lowercase(list_text):
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # Read CSV
 
-pandas.read_csv
-df = pandas.read_csv('women_clothing_review.csv')
+pd.read_csv
+df = pd.read_csv('women_clothing_review.csv')
 list_reviews = df.values.tolist()
 
 list_reviews_text=df['review_text']
@@ -152,28 +154,51 @@ draw_wordCloud('review_text', "WordCloud for the 200 most frequent words", 200)
 
 
 #%% Word2Vec
+import spacy
+import re 
+spacy.cli.download("en_core_web_sm")
+df = df.dropna().reset_index(drop=True)
 
-# Conversion of lower case letters
+nlp = spacy.load("en_core_web_sm", disable=['ner', 'parser']) # disabling Named Entity Recognition for speed
 
-list_reviews_text_cleaned = word_tokens.copy()
-convert_to_lowercase(list_reviews_text_cleaned)
+def cleaning(doc):
+    # Lemmatizes and removes stopwords
+    # doc needs to be a spacy Doc object
+    txt = [token.lemma_ for token in doc if not token.is_stop]
+    # Word2Vec uses context words to learn the vector representation of a target word,
+    # if a sentence is only one or two words long,
+    # the benefit for the training is very small
+    if len(txt) > 2:
+        return ' '.join(txt)
+    
+brief_cleaning = (re.sub("[^A-Za-z']+", ' ', str(row)).lower() for row in df['review_text'])
+txt = [cleaning(doc) for doc in nlp.pipe(brief_cleaning, batch_size=5000)]
+#%%
+df_clean = pd.DataFrame({'clean': txt})
+df_clean = df_clean.dropna().drop_duplicates()
+#%%
+from gensim.models.phrases import Phrases, Phraser
 
+sent = [row.split() for row in df_clean['clean']]
+phrases = Phrases(sent, min_count=30, progress_per=10000)
+
+bigram = Phraser(phrases)
+
+sentences = bigram[sent]
+#%%
+import multiprocessing
 
 from gensim.models import Word2Vec
-
-model = Word2Vec(sentences = list_reviews_text_cleaned, vector_size=100, window=5, min_count=1, workers=4)
-model.save("word2vec.model")
-
-model = Word2Vec.load("word2vec.model")
-model.train([["dress", "size"]], total_examples=1, epochs=100)
-
-#Wyuczone wektory słów są przechowywane w KeyedVectorsinstancji jako model.wv
-
-vector = model.wv['d'] # get numpy vector of a word
-print("Get numpy vector of a word d")
-print(vector)
-sims = model.wv.most_similar('d', topn=10) # get other similar words 
-print("Get other similar words to d")
-print(sims) 
-
-
+cores = multiprocessing.cpu_count() 
+w2v_model = Word2Vec(min_count=20,
+                     window=2,
+                     vector_size=300,
+                     sample=6e-5, 
+                     alpha=0.03, 
+                     min_alpha=0.0007, 
+                     negative=20,
+                     workers=cores-1)
+w2v_model.build_vocab(sentences, progress_per=10000)
+w2v_model.train(sentences, total_examples=w2v_model.corpus_count, epochs=30, report_delay=1)
+#%%
+most_sim=w2v_model.wv.most_similar(positive=["dress"])
