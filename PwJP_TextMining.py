@@ -24,7 +24,7 @@ nltk.download('punkt')
 #delete punctuation
 from nltk.tokenize import RegexpTokenizer
 from wordcloud import WordCloud
-
+import matplotlib.colors as mcolors
 import gensim
 from gensim import corpora
 
@@ -71,7 +71,36 @@ def topic_Modelling(corpus, num_of_topics, dictionary, num_of_words):
     ldamodel.save('model5.gensim')
     topics = ldamodel.print_topics(num_words=num_of_words)
     for topic in topics:
-        print(topic)       
+        print(topic) 
+    
+    
+   
+    cols = [color for name, color in mcolors.TABLEAU_COLORS.items()] 
+    for i in range(num_of_topics):
+        cloud = WordCloud(stopwords=stop_words,
+                  background_color='white',
+                  width=2500,
+                  height=1800,
+                  max_words=num_of_words,
+                  colormap='tab10',
+                  color_func=lambda *args, **kwargs: cols[i],
+                  prefer_horizontal=1.0)
+    
+    
+    
+        topics = ldamodel.show_topics(formatted=False)
+        topic_words = dict(topics[i][1])
+        cloud.generate_from_frequencies(topic_words, max_font_size=300)
+        plt.gca().imshow(cloud)
+        plt.gca().set_title('Topic ' + str(i), fontdict=dict(size=16))
+        plt.gca().axis('off')
+        plt.show()
+
+    
+    
+    
+    
+    
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #                                               Code
@@ -227,7 +256,7 @@ dictionary.save('dictionary.gensim')
 
 #%% Wyszukanie 5 tematów z 4 najważniejszymi słowami kluczowymi i ich wagami 
 
-topic_Modelling(corpus, 5, dictionary, 4)
+topic_Modelling(corpus, 7, dictionary, 10)
 
 
 
