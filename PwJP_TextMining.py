@@ -24,6 +24,11 @@ nltk.download('punkt')
 #delete punctuation
 from nltk.tokenize import RegexpTokenizer
 from wordcloud import WordCloud
+
+import gensim
+from gensim import corpora
+
+
 # Functions
 
 def draw_plot(feature, title, df,  size=1):
@@ -61,7 +66,12 @@ def convert_to_lowercase(list_text):
         list_text[idx]  = x  
    
  
-    
+def topic_Modelling(corpus, num_of_topics, dictionary, num_of_words):
+    ldamodel = gensim.models.ldamodel.LdaModel(corpus, num_topics = num_of_topics, id2word=dictionary, passes=15)
+    ldamodel.save('model5.gensim')
+    topics = ldamodel.print_topics(num_words=num_of_words)
+    for topic in topics:
+        print(topic)       
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #                                               Code
@@ -202,3 +212,24 @@ w2v_model.build_vocab(sentences, progress_per=10000)
 w2v_model.train(sentences, total_examples=w2v_model.corpus_count, epochs=30, report_delay=1)
 #%%
 most_sim=w2v_model.wv.most_similar(positive=["dress"])
+#%% Modelowanie tematyczne
+
+#tworzenie słownika (dictionary) i korpusu (corpus) potrzebnego do modelowania tematycznego
+from gensim import corpora
+dictionary = corpora.Dictionary(sentences) 
+corpus = [dictionary.doc2bow(text) for text in sentences]
+
+
+#zapis słownika i korpusu
+import pickle
+pickle.dump(corpus, open('corpus.pkl', 'wb'))
+dictionary.save('dictionary.gensim')
+
+#%% Wyszukanie 5 tematów z 4 najważniejszymi słowami kluczowymi i ich wagami 
+
+topic_Modelling(corpus, 5, dictionary, 4)
+
+
+
+
+
