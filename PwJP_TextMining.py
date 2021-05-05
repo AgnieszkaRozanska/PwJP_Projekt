@@ -258,7 +258,41 @@ dictionary.save('dictionary.gensim')
 
 topic_Modelling(corpus, 7, dictionary, 10)
 
+#%% Ładowanie list pozytywnych i negatywnych słów
+positive_words = pd.read_csv('positive_words.csv')
+positive_words=positive_words['word'].values.tolist()
+negative_words = pd.read_csv('negative_words.csv')
+negative_words=negative_words['word'].values.tolist()
+#%% Sprawdzanie w każdej notatce ilosci slow negatywnych i pozytywnych, nadanie flag na podstawie tej ilosci oraz ratings
+table_flags=[]
+for index, row in df_clean.iterrows():
+    tokens=row['clean'].split()
+    st = set(tokens)
+    pos_words=[e for i, e in enumerate(positive_words) if e in st]
+    neg_words=[e for i, e in enumerate(negative_words) if e in st]
+    if(len(pos_words)>len(neg_words)):
+        flag='positive'
+    elif(len(neg_words)>len(pos_words)):
+        flag='negative'
+    else:
+        flag='neutral'
+    rating=list_reviews[index][5]
+    if(rating>3):
+        rating_flag='positive'
+    elif(rating<3):
+        rating_flag='negative'
+    else:
+        rating_flag='neutral'
+    table_flags.append([row['clean'],pos_words,len(pos_words),neg_words,len(neg_words),flag,rating_flag])
+    
+df_pos_neg_words = pd.DataFrame(table_flags, columns=["review","positive_words","pos_count","negative_words","neg_count","flag","rating_flag"])   
 
-
+#%% liczba zgadzających się flag 
+counter_matched_flags=0
+for item in table_flags:
+    if(item[5]==item[6]):
+        counter_matched_flags=counter_matched_flags+1
+print(counter_matched_flags)
+  
 
 
