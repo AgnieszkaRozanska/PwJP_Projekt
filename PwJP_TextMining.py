@@ -231,7 +231,7 @@ from gensim.models import Word2Vec
 cores = multiprocessing.cpu_count() 
 w2v_model = Word2Vec(min_count=20,
                      window=2,
-                     vector_size=300,
+                     size=300,
                      sample=6e-5, 
                      alpha=0.03, 
                      min_alpha=0.0007, 
@@ -294,5 +294,30 @@ for item in table_flags:
         counter_matched_flags=counter_matched_flags+1
 print(counter_matched_flags)
   
-
-
+#%%Podzielenie danych 
+index = df_pos_neg_words.index
+df_pos_neg_words['random_number'] = np.random.randn(len(index))
+train = df_pos_neg_words[df_pos_neg_words['random_number'] <= 0.8]
+test = df_pos_neg_words[df_pos_neg_words['random_number'] > 0.8]
+#%%
+from sklearn.feature_extraction.text import CountVectorizer
+vectorizer = CountVectorizer(token_pattern=r'\b\w+\b')
+train_matrix = vectorizer.fit_transform(train['review'])
+test_matrix = vectorizer.transform(test['review'])
+#%% Regresja logistyczna 
+from sklearn.linear_model import LogisticRegression
+lr = LogisticRegression()
+X_train = train_matrix
+X_test = test_matrix
+y_train = train['rating_flag']
+y_test = test['rating_flag']
+#%%
+lr.fit(X_train,y_train)
+#%%
+predictions = lr.predict(X_test)
+#%%
+from sklearn.metrics import confusion_matrix,classification_report
+new = np.asarray(y_test)
+confusion_matrix(predictions,y_test)
+#%%
+print(classification_report(predictions,y_test))
