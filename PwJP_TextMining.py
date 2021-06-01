@@ -231,7 +231,8 @@ from gensim.models import Word2Vec
 cores = multiprocessing.cpu_count() 
 w2v_model = Word2Vec(min_count=20,
                      window=2,
-                     size=300,
+                     #size=300,
+                     vector_size=300,
                      sample=6e-5, 
                      alpha=0.03, 
                      min_alpha=0.0007, 
@@ -325,39 +326,22 @@ print(classification_report(predictions,y_test))
 #%%   Drzewo decyzyjne
 
 
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.tree import export_text
-
-feature_cols = ['age', 'rating', 'positive_feedback_count', 'division_name','department_name','class_name']
-X = df[feature_cols] # Features
-Y = df.recommended_IND # Target variable
-
-
-decision_tree = DecisionTreeClassifier(random_state=0, max_depth=2)
-decision_tree = decision_tree.fit(X, Y)
-r = export_text(decision_tree, feature_names=iris['feature_names'])
-print(r)
-
-
-
-#%%
-
 from sklearn.tree import DecisionTreeClassifier 
 from sklearn.model_selection import train_test_split 
 from sklearn import metrics
 
 
 
-col_names = ['ID','clothing_ID','age','title','review_text','rating','recommended_IND','positive_feedback_count','division_name','department_name','class_name']
-dane_dt = pd.read_csv("women_clothing_review.csv", header=None, names=col_names)
+#col_names = ['ID','clothing_ID','age','title','review_text','rating','recommended_IND','positive_feedback_count','division_name','department_name','class_name']
+#dane_dt = pd.read_csv("women_clothing_review.csv", header=None, names=col_names)
 
 
 # podział danych na zmienne zalezne (target, zmienna celu) i na zmienne niezalezne (cechy)
 from sklearn import tree
 feature_cols = ['age', 'rating', 'positive_feedback_count', 'division_name','department_name','class_name']
-X = pd.get_dummies(dane_dt[feature_cols]) # zmienne
-#X = dane_dt[feature_cols] # zmienne
-y = dane_dt.recommended_IND # Target 
+X = pd.get_dummies(df[feature_cols]) # zmienne
+#X = df[feature_cols] # zmienne
+y = df.recommended_IND # Target 
 
 
 #podzial danych
@@ -367,7 +351,9 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 
 # Budowa drzewa 
 # Utworzenie obiektu klasyfikatora drzewa decyzyjnego
-clf = DecisionTreeClassifier(criterion='gini', splitter='best', max_depth=110, min_samples_leaf =200)
+clf = DecisionTreeClassifier(criterion='gini', splitter='best', max_depth=200, min_samples_leaf =200)
+#clf = DecisionTreeClassifier()
+
 
 # Nauka
 clf = clf.fit(X_train,y_train)
@@ -391,7 +377,7 @@ print(text_representation)
 import graphviz 
 dot_data = tree.export_graphviz(clf, out_file='decision_tree.dot', 
                       feature_names=X.columns,  
-                      class_names=dane_dt[feature_cols].columns,  
+                      class_names=str(y),  
                       filled=True, rounded=True,  
                       special_characters=True)  
 
