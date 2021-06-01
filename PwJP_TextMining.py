@@ -231,7 +231,7 @@ from gensim.models import Word2Vec
 cores = multiprocessing.cpu_count() 
 w2v_model = Word2Vec(min_count=20,
                      window=2,
-                     vector_size=300,
+                     size=300,
                      sample=6e-5, 
                      alpha=0.03, 
                      min_alpha=0.0007, 
@@ -388,6 +388,17 @@ text_representation = tree.export_text(clf)
 print(text_representation)
 
 #%%
+import graphviz 
+dot_data = tree.export_graphviz(clf, out_file='decision_tree.dot', 
+                      feature_names=X.columns,  
+                      class_names=dane_dt[feature_cols].columns,  
+                      filled=True, rounded=True,  
+                      special_characters=True)  
 
+#%%
+import pydot
+
+(graph,) = pydot.graph_from_dot_file('decision_tree.dot')
+graph.write_png('decision_tree.png')
 
 
