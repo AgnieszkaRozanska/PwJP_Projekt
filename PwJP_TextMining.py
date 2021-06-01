@@ -355,18 +355,19 @@ dane_dt = pd.read_csv("women_clothing_review.csv", header=None, names=col_names)
 # podział danych na zmienne zalezne (target, zmienna celu) i na zmienne niezalezne (cechy)
 from sklearn import tree
 feature_cols = ['age', 'rating', 'positive_feedback_count', 'division_name','department_name','class_name']
-X = pd.get_dummies(dane_dt[feature_cols]) # Features
-y = dane_dt.recommended_IND # Target variable
+X = pd.get_dummies(dane_dt[feature_cols]) # zmienne
+#X = dane_dt[feature_cols] # zmienne
+y = dane_dt.recommended_IND # Target 
 
 
 #podzial danych
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1) # 70% training and 30% test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1) # 70% uczenie, 30% test
 
 
 # Budowa drzewa 
 # Utworzenie obiektu klasyfikatora drzewa decyzyjnego
-clf = DecisionTreeClassifier()
+clf = DecisionTreeClassifier(criterion='gini', splitter='best', max_depth=110, min_samples_leaf =200)
 
 # Nauka
 clf = clf.fit(X_train,y_train)
@@ -382,10 +383,11 @@ print("Dokładnosć:",metrics.accuracy_score(y_test, y_pred))
 # wywetlenie w plots drzewa
 tree.plot_tree(clf) 
 
-
 # wyswetlenie w konsoli drzewa
 text_representation = tree.export_text(clf)
 print(text_representation)
+
+#%%
 
 
 
