@@ -333,13 +333,12 @@ from sklearn import metrics
 # podział danych na zmienne zalezne (target, zmienna celu) i na zmienne niezalezne (cechy)
 from sklearn import tree
 feature_cols = ['age', 'rating', 'positive_feedback_count', 'division_name','department_name','class_name']
-X = pd.get_dummies(df[feature_cols]) # zmienne
-#X = df[feature_cols] # zmienne
-y = df.recommended_IND # Target 
+features = pd.get_dummies(df[feature_cols]) # zmienne
+target = df.recommended_IND # Target 
 
 
 #podzial danych
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1) # 70% uczenie, 30% test
+features_train, features_test, target_train, target_test = train_test_split(features, target, test_size=0.3, random_state=1) # 70% uczenie, 30% test
 
 
 # Budowa drzewa 
@@ -349,14 +348,14 @@ clf = DecisionTreeClassifier(criterion='gini', splitter='best', max_depth=200, m
 
 
 # Nauka
-clf = clf.fit(X_train,y_train)
+clf = clf.fit(features_train,target_train)
 
 # Predykcja
-y_pred = clf.predict(X_test)
+target_pred = clf.predict(features_test)
 
 
 # Obliczenie dokładnoci modelu
-print("Dokładnosć:",metrics.accuracy_score(y_test, y_pred))
+print("Dokładnosć:",metrics.accuracy_score(target_test, target_pred))
 
 
 # wywetlenie w plots drzewa
@@ -369,7 +368,7 @@ print(text_representation)
 #%%
 import graphviz 
 dot_data = tree.export_graphviz(clf, out_file='decision_tree.dot', 
-                      feature_names=X.columns,  
+                      feature_names=features.columns,  
                       class_names=["not recommended","recommended"], 
                       filled=True, rounded=True,  
                       special_characters=True)  
