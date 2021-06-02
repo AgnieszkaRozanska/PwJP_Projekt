@@ -330,12 +330,6 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split 
 from sklearn import metrics
 
-
-
-#col_names = ['ID','clothing_ID','age','title','review_text','rating','recommended_IND','positive_feedback_count','division_name','department_name','class_name']
-#dane_dt = pd.read_csv("women_clothing_review.csv", header=None, names=col_names)
-
-
 # podział danych na zmienne zalezne (target, zmienna celu) i na zmienne niezalezne (cechy)
 from sklearn import tree
 feature_cols = ['age', 'rating', 'positive_feedback_count', 'division_name','department_name','class_name']
@@ -345,7 +339,6 @@ y = df.recommended_IND # Target
 
 
 #podzial danych
-
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1) # 70% uczenie, 30% test
 
 
@@ -377,7 +370,7 @@ print(text_representation)
 import graphviz 
 dot_data = tree.export_graphviz(clf, out_file='decision_tree.dot', 
                       feature_names=X.columns,  
-                      class_names=str(y),  
+                      class_names=["not recommended","recommended"], 
                       filled=True, rounded=True,  
                       special_characters=True)  
 
