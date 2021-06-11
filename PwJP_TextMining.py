@@ -231,8 +231,8 @@ from gensim.models import Word2Vec
 cores = multiprocessing.cpu_count() 
 w2v_model = Word2Vec(min_count=20,
                      window=2,
-                     #size=300,
-                     vector_size=300,
+                     size=300,
+                     #vector_size=300,
                      sample=6e-5, 
                      alpha=0.03, 
                      min_alpha=0.0007, 
@@ -296,6 +296,8 @@ for item in table_flags:
 print(counter_matched_flags)
   
 #%%Podzielenie danych 
+
+df_pos_neg_words = df_pos_neg_words.drop(df_pos_neg_words[df_pos_neg_words.rating_flag == 'neutral'].index)
 index = df_pos_neg_words.index
 df_pos_neg_words['random_number'] = np.random.randn(len(index))
 train = df_pos_neg_words[df_pos_neg_words['random_number'] <= 0.8]
@@ -307,7 +309,7 @@ train_matrix = vectorizer.fit_transform(train['review'])
 test_matrix = vectorizer.transform(test['review'])
 #%% Regresja logistyczna 
 from sklearn.linear_model import LogisticRegression
-lr = LogisticRegression()
+lr = LogisticRegression(solver='liblinear', C=10.0, random_state=0)
 X_train = train_matrix
 X_test = test_matrix
 y_train = train['rating_flag']
@@ -321,14 +323,33 @@ from sklearn.metrics import confusion_matrix,classification_report
 new = np.asarray(y_test)
 confusion_matrix(predictions,y_test)
 #%%
+from sklearn import metrics
 print(classification_report(predictions,y_test))
+cnf_matrix = metrics.confusion_matrix(y_test, predictions)
+#%%
+class_names=[0,1] # name  of classes
+fig, ax = plt.subplots()
+tick_marks = np.arange(len(class_names))
+plt.xticks(tick_marks, class_names)
+plt.yticks(tick_marks, class_names)
+# create heatmap
+sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="YlGnBu" ,fmt='g')
+ax.xaxis.set_label_position("top")
+plt.tight_layout()
+plt.title('Confusion matrix', y=1.1)
+plt.ylabel('Actual label')
+plt.xlabel('Predicted label')
+#%%
+print("Precision:",metrics.precision_score(y_test, predictions,pos_label="positive"))
+print("Recall:",metrics.recall_score(y_test, predictions,pos_label="positive"))
+print("Accuracy:",metrics.accuracy_score(y_test, predictions))
+
 
 #%%   Drzewo decyzyjne
 
 
 from sklearn.tree import DecisionTreeClassifier 
 from sklearn.model_selection import train_test_split 
-from sklearn import metrics
 
 # podział danych na zmienne zalezne (target, zmienna celu) i na zmienne niezalezne (cechy)
 from sklearn import tree
