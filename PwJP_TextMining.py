@@ -148,7 +148,8 @@ draw_plot("age", "Customer age distribution", df,4)
 draw_plot("division_name", "The distribution of divisions name", df,4)
 draw_plot("department_name", "The distribution of departments name", df,4)
 draw_plot("class_name", "The distribution of classes name", df,4)
-
+draw_plot("rating", "The distribution of rating", df,4)
+draw_plot("recommended_IND", "The distribution of recommended IND", df,4)
 
 #%% Most frequent words in review_text
 all_reviews = ','.join([str(i) for i in list_only_reviews])
@@ -231,8 +232,8 @@ from gensim.models import Word2Vec
 cores = multiprocessing.cpu_count() 
 w2v_model = Word2Vec(min_count=20,
                      window=2,
-                     size=300,
-                     #vector_size=300,
+                     #size=300,
+                     vector_size=300,
                      sample=6e-5, 
                      alpha=0.03, 
                      min_alpha=0.0007, 
