@@ -46,7 +46,7 @@ edge [fontname=helvetica] ;
 19 -> 21 ;
 22 [label=<rating &le; 4.5<br/>gini = 0.022<br/>samples = 10633<br/>value = [120, 10513]<br/>class = recommended>, fillcolor="#3b9ee5"] ;
 0 -> 22 [labeldistance=2.5, labelangle=-45, headlabel="False"] ;
-23 [label=<department_name_Dresses &le; 0.5<br/>gini = 0.066<br/>samples = 3031<br/>value = [104, 2927]<br/>class = recommended>, fillcolor="#40a0e6"] ;
+23 [label=<class_name_Dresses &le; 0.5<br/>gini = 0.066<br/>samples = 3031<br/>value = [104, 2927]<br/>class = recommended>, fillcolor="#40a0e6"] ;
 22 -> 23 ;
 24 [label=<positive_feedback_count &le; 2.5<br/>gini = 0.054<br/>samples = 2180<br/>value = [60, 2120]<br/>class = recommended>, fillcolor="#3fa0e6"] ;
 23 -> 24 ;

@@ -365,10 +365,10 @@ features_train, features_test, target_train, target_test = train_test_split(feat
 
 # Budowa drzewa 
 # Utworzenie obiektu klasyfikatora drzewa decyzyjnego
-clf = DecisionTreeClassifier(criterion='gini', splitter='best', max_depth=200, min_samples_leaf =200)
+clf = DecisionTreeClassifier(criterion='gini', splitter='best', max_depth=200, min_samples_leaf = 80)
 #clf = DecisionTreeClassifier()
 
-
+#
 # Nauka
 clf = clf.fit(features_train,target_train)
 
@@ -377,7 +377,12 @@ target_pred = clf.predict(features_test)
 
 
 # Obliczenie dokładnoci modelu
-print("Dokładnosć:",metrics.accuracy_score(target_test, target_pred))
+print(" ")
+print("Decision tree")
+print("Accuracy:",metrics.accuracy_score(target_test, target_pred))
+print("Precision:",metrics.precision_score(target_test, target_pred))
+print("Recall:",metrics.recall_score(target_test, target_pred))
+
 
 
 # wywetlenie w plots drzewa
