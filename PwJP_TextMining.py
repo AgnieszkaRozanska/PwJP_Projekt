@@ -19,8 +19,8 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize 
 #download english stopwords
-nltk.download('stopwords')
-nltk.download('punkt')
+#nltk.download('stopwords')
+#nltk.download('punkt')
 #delete punctuation
 from nltk.tokenize import RegexpTokenizer
 from wordcloud import WordCloud
@@ -196,7 +196,7 @@ draw_wordCloud('review_text', "WordCloud for the 200 most frequent words", 200)
 #%% Word2Vec
 import spacy
 import re 
-spacy.cli.download("en_core_web_sm")
+#spacy.cli.download("en_core_web_sm")
 df = df.dropna().reset_index(drop=True)
 
 nlp = spacy.load("en_core_web_sm", disable=['ner', 'parser']) # disabling Named Entity Recognition for speed
@@ -232,8 +232,8 @@ from gensim.models import Word2Vec
 cores = multiprocessing.cpu_count() 
 w2v_model = Word2Vec(min_count=20,
                      window=2,
-                     #size=300,
-                     vector_size=300,
+                     size=300,
+                     #vector_size=300,
                      sample=6e-5, 
                      alpha=0.03, 
                      min_alpha=0.0007, 
@@ -310,7 +310,7 @@ train_matrix = vectorizer.fit_transform(train['review'])
 test_matrix = vectorizer.transform(test['review'])
 #%% Regresja logistyczna 
 from sklearn.linear_model import LogisticRegression
-lr = LogisticRegression(solver='liblinear', C=10.0, random_state=0)
+lr = LogisticRegression(solver='liblinear', C=30.0, random_state=0)
 X_train = train_matrix
 X_test = test_matrix
 y_train = train['rating_flag']
@@ -334,7 +334,7 @@ tick_marks = np.arange(len(class_names))
 plt.xticks(tick_marks, class_names)
 plt.yticks(tick_marks, class_names)
 # create heatmap
-sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="YlGnBu" ,fmt='g')
+sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="PiYG" ,fmt='g')
 ax.xaxis.set_label_position("top")
 plt.tight_layout()
 plt.title('Confusion matrix', y=1.1)
